@@ -81,7 +81,10 @@ func Digest(c *Config, open, closed []*PullRequest) error {
 	if c.InlineStyles {
 		options := premailer.NewOptions()
 		options.CssToAttributes = true
-		prem := premailer.NewPremailerFromString(buf.String(), options)
+		prem, err := premailer.NewPremailerFromString(buf.String(), options)
+		if err != nil {
+			return err
+		}
 		contents, err = prem.Transform()
 		if err != nil {
 			return err

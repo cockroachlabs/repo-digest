@@ -1,0 +1,52 @@
+# A cronjob to send the digest email.  It relies on the NFS volume to
+# maintain incremental progress. The GitHub API token must be created in
+# advance:
+#
+# kubectl create secret generic repo-digest-secret \
+#         --from-file=ssmtp.conf --from-file=github-issue-token
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: repo-digest
+spec:
+  # Disallow concurrent jobs.
+  concurrencyPolicy: Forbid
+  # Run only on weekdays.
+  schedule: "5 5 * * 1-5"
+  # Must start within 1 minute of expected time, or we'll skip
+  # to the next tick.
+  startingDeadlineSeconds: 60
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 900 # 15 minutes to complete
+      template:
+        spec:
+          containers:
+            - name: repo-digest
+              image: gcr.io/cockroach-dev-inf/cockroachlabs/repo-digest:master
+              imagePullPolicy: Always
+              # Guaranteed resources.
+              resources:
+                requests:
+                  cpu: 0.1
+                  memory: 100Mi
+                limits:
+                  cpu: 0.1
+                  memory: 100Mi
+              volumeMounts:
+                - mountPath: "/data"
+                  name: data
+                  subPath: "repo-digest"
+                - mountPath: "/secrets"
+                  name: secrets
+                  readOnly: true
+          restartPolicy: Never
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: roachdash-claim
+            - name: secrets
+              secret:
+                defaultMode: 0600
+                secretName: repo-digest-secret
