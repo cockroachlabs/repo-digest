@@ -3,7 +3,7 @@
 # must be created in advance:
 #
 # kubectl create secret generic repo-digest-secret \
-#         --from-file=ssmtp.conf --from-file=github-issue-token
+#         --from-file=msmtp.conf --from-file=github-issue-token
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:

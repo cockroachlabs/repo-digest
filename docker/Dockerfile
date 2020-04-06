@@ -1,4 +1,4 @@
-FROM golang:1.12
+FROM golang:1.13
 ENTRYPOINT /entrypoint.sh
 ENV WORKDIR /build
 WORKDIR $WORKDIR

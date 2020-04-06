@@ -11,10 +11,10 @@ mv repo-digest /usr/local/bin
 
 # Install a simple MTA.
 apt-get update -y
-apt-get install ssmtp -y
+apt-get install msmtp -y
 
 # Link config file into place.
-ln -sf /secrets/ssmtp.conf /etc/ssmtp/
+ln -sf /secrets/msmtprc /etc/msmtprc
 
 # Delete unneeded files.
 rm -rf /var/lib/apt/lists/* /go $WORKDIR

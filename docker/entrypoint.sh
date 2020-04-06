@@ -49,5 +49,5 @@ Subject: cockroachdb digest since ${pretty_since}
 EOF
 sed 's/\.svg/.png/g' ${digest_file} >> /tmp/mail
 
-ssmtp -t < /tmp/mail
+msmtp -t < /tmp/mail
 
